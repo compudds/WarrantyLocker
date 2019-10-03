@@ -21,15 +21,15 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
     
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     
-    func shareImage(yourImage: UIImage) {
+    func shareImage(_ yourImage: UIImage) {
         
         let vc = UIActivityViewController(activityItems: [yourImage], applicationActivities: [])
         
-        presentViewController(vc, animated: true, completion: nil)
+        present(vc, animated: true, completion: nil)
     }
     
     
-    @IBAction func print(sender: AnyObject) {
+    @IBAction func sendBtn(_ sender: AnyObject) {
         
         if image.image == nil {
             
@@ -41,19 +41,20 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
 
         
     }
-    @IBAction func backBtn(sender: AnyObject) {
+    @IBAction func backBtn(_ sender: AnyObject) {
         
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 80, 80))
+        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        activityIndicator.style = UIActivityIndicatorView.Style.gray
         self.view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        UIApplication.shared.beginIgnoringInteractionEvents()
+       
         
         parseImage = ""
         
-        performSegueWithIdentifier("warrantyImageToHome", sender: self)
+        performSegue(withIdentifier: "warrantyImageToHome", sender: self)
         
     }
     override func viewDidLoad() {
@@ -67,7 +68,7 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
         
         //let scrollImg: UIScrollView = UIScrollView()
         scrollImg.delegate = self
-        scrollImg.frame = CGRectMake(15, 60, vWidth, vHeight)
+        scrollImg.frame = CGRect(x: 15, y: 60, width: vWidth, height: vHeight)
         scrollImg.alwaysBounceVertical = false
         scrollImg.alwaysBounceHorizontal = false
         scrollImg.showsVerticalScrollIndicator = true
@@ -82,10 +83,9 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
         image!.clipsToBounds = false
         scrollImg.addSubview(image!)
         
-        
     }
     
-    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.image
     }
     
@@ -94,13 +94,13 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
         
         let query = PFQuery(className:"Warranties")
         query.whereKey("objectId", equalTo: parseImage)
-        query.findObjectsInBackgroundWithBlock {
-            (objects: [PFObject]?, error: NSError?) -> Void in
+        query.findObjectsInBackground {
+            (objects, error) in
             
             if error == nil {
                 
-                self.print("Successfully retrieved \(objects!.count) warranty image.")
-                
+                print("Successfully retrieved \(objects!.count) warranty image.")
+        
                 //if let objects = objects {
                     for object in objects! {
                         
@@ -108,12 +108,12 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
                         
                         if (userImageFile.name != "") {
                        
-                        userImageFile.getDataInBackgroundWithBlock {
-                            (imageData: NSData?, error: NSError?) -> Void in
+                        userImageFile.getDataInBackground {
+                            (imageData, error) in
                             if error == nil {
                                 if let imageData = imageData {
                                     
-                                    if imageData.length > 0 {
+                                    if imageData.count > 0 {
         
                                         self.showImage = UIImage(data:imageData)!
                                         self.image.image = self.showImage
@@ -128,15 +128,15 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
                         
                         } else {
                                 
-                                let alert = UIAlertController(title: "Sorry, Warranty Image was not found.", message: "The image was never uploaded.", preferredStyle: UIAlertControllerStyle.Alert)
-                                alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { action in
+                                let alert = UIAlertController(title: "Sorry, Warranty Image was not found.", message: "The image was never uploaded.", preferredStyle: UIAlertController.Style.alert)
+                                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
                                     
-                                    alert.dismissViewControllerAnimated(true, completion: nil)
+                                    alert.dismiss(animated: true, completion: nil)
                                     
                                     
                                 }))
                                 
-                                self.presentViewController(alert, animated: true, completion: nil)
+                                self.present(alert, animated: true, completion: nil)
                             
                                 
                             }
@@ -148,17 +148,17 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
                 
             } else {
                 
-                self.print(error!)
+                print(error!)
                 
-                let alert = UIAlertController(title: "Sorry, Warranty Image was not found.", message: "The image was never uploaded.", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { action in
+                let alert = UIAlertController(title: "Sorry, Warranty Image was not found.", message: "The image was never uploaded.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
                     
-                    alert.dismissViewControllerAnimated(true, completion: nil)
+                    alert.dismiss(animated: true, completion: nil)
                     
                     
                 }))
                 
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
                 
                 
             }
@@ -166,7 +166,7 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         
         noInternetConnection()
     }
@@ -186,15 +186,15 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
             
             print("Internet connection FAILED")
             
-            let alert = UIAlertController(title: "Sorry, no internet connection found.", message: "Warranty Locker requires an internet connection.", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "Try Again?", style: .Default, handler: { action in
+            let alert = UIAlertController(title: "Sorry, no internet connection found.", message: "Warranty Locker requires an internet connection.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Try Again?", style: .default, handler: { action in
                 
-                alert.dismissViewControllerAnimated(true, completion: nil)
+                alert.dismiss(animated: true, completion: nil)
                 self.noInternetConnection()
                 
             }))
             
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
             
             
         }
