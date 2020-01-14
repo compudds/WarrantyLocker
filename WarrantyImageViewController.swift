@@ -46,10 +46,10 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
         activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.gray
+        activityIndicator.style = UIActivityIndicatorView.Style.large
         self.view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
+        self.view.isUserInteractionEnabled = false
        
         
         parseImage = ""
@@ -60,8 +60,15 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //scrollView.contentSize.height = 531
-        //scrollView.contentSize.width = 353
+        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+         activityIndicator.center = self.view.center
+         activityIndicator.hidesWhenStopped = true
+         activityIndicator.style = UIActivityIndicatorView.Style.large
+         self.view.addSubview(activityIndicator)
+         activityIndicator.startAnimating()
+         self.view.isUserInteractionEnabled = false
+        
+        
         
         let vWidth = self.view.frame.width
         let vHeight = self.view.frame.height
@@ -90,7 +97,6 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func getImage() {
-        
         
         let query = PFQuery(className:"Warranties")
         query.whereKey("objectId", equalTo: parseImage)
@@ -181,6 +187,8 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
             
             getImage()
             
+            activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
             
         } else {
             

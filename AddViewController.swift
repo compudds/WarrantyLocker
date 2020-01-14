@@ -63,10 +63,10 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
         activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.gray
+        activityIndicator.style = UIActivityIndicatorView.Style.large
         self.view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
+        self.view.isUserInteractionEnabled = false
 
         
         performSegue(withIdentifier: "addToHome", sender: self)

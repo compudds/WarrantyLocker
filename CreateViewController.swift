@@ -58,15 +58,15 @@ class CreateViewController: UIViewController {
         activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.gray
+        activityIndicator.style = UIActivityIndicatorView.Style.large
         view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
+        self.view.isUserInteractionEnabled = false
         
         if username.text == "" || password.text == "" || emailaddress.text == "" {
             
             self.activityIndicator.stopAnimating()
-            UIApplication.shared.endIgnoringInteractionEvents()
+            self.view.isUserInteractionEnabled = true
             
             error = "Please enter all fields."
             
@@ -85,7 +85,7 @@ class CreateViewController: UIViewController {
                 (succeeded, signupError) -> Void in
                 
                 self.activityIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
+                self.view.isUserInteractionEnabled = true
                 
                 if signupError == nil  {
                     // Hooray! Let them use the app now.
@@ -124,7 +124,7 @@ class CreateViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //clean = ""
-        
+    
     }
     
     override func didReceiveMemoryWarning() {

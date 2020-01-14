@@ -11,7 +11,6 @@ import Parse
 
 class LoginViewController: UIViewController {
     
-    
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     
     func displayAlert(_ title:String, error:String) {
@@ -26,7 +25,6 @@ class LoginViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
         
     }
-    
     
     @IBOutlet var username: UITextField!
     
@@ -60,7 +58,6 @@ class LoginViewController: UIViewController {
         
     }
     
-    
     @IBAction func loginn(_ sender: AnyObject) {
         
         var error = ""
@@ -69,17 +66,17 @@ class LoginViewController: UIViewController {
         activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.gray
+        activityIndicator.style = UIActivityIndicatorView.Style.large
         view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
+        self.view.isUserInteractionEnabled = false
         
         if self.emailPasswordReset.alpha == 0 {
             
             if username.text == "" || password.text == "" {
                 
                 self.activityIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
+                self.view.isUserInteractionEnabled = true
                 
                 error = "Please enter all fields."
                 
@@ -87,17 +84,20 @@ class LoginViewController: UIViewController {
                 
             } else {
                 
+                
                 PFUser.logInWithUsername(inBackground: username.text!, password:password.text!) {
                     (user, signupError) -> Void in
                     
                     
                     self.activityIndicator.stopAnimating()
-                    UIApplication.shared.endIgnoringInteractionEvents()
+                    self.view.isUserInteractionEnabled = true
                     
                     if user != nil {
                         
                         print("\(PFUser.current()!) is logged in")
                         userEmail = PFUser.current()!.email!
+                        
+                        currentLoginState = "authorized"
                         
                         self.performSegue(withIdentifier: "loginToHome", sender: self)
                         
@@ -131,7 +131,7 @@ class LoginViewController: UIViewController {
                 PFUser.requestPasswordResetForEmail(inBackground: self.emailPasswordReset.text!)
                 
                 self.activityIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
+                self.view.isUserInteractionEnabled = true
                 
                 
                 self.emailPasswordReset.alpha = 0
@@ -142,7 +142,7 @@ class LoginViewController: UIViewController {
             } else {
                 
                 self.activityIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
+                self.view.isUserInteractionEnabled = true
                 
                 
                 let alert = UIAlertController(title: "Enter email address!", message: error, preferredStyle: UIAlertController.Style.alert)
@@ -168,6 +168,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
+       
     }
     
     
@@ -209,21 +210,23 @@ class LoginViewController: UIViewController {
         }
         
     }
-
     
     override func viewDidAppear(_ animated: Bool) {
         
-        if PFUser.current() != nil {
+        noInternetConnection()
+        
+        if (PFUser.current() != nil ) {
+            
             userEmail = PFUser.current()!.email!
+            
             print(userEmail)
             
             self.performSegue(withIdentifier: "loginToHome", sender: self)
+        
+        } 
             
-        }
-        
-        noInternetConnection()
-        
     }
+    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
@@ -233,14 +236,6 @@ class LoginViewController: UIViewController {
         // username.resignFirstResponder()
         return true
     }
-    
-    /*override func viewWillAppear(animated: Bool) {
-        self.navigationController?.navigationBarHidden = true
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        self.navigationController?.navigationBarHidden = false
-    }*/
     
 }
 

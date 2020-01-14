@@ -10,6 +10,9 @@ import UIKit
 import Parse
 import Bolts
 //import PushNotificationManager
+import AuthenticationServices
+
+var currentLoginState = String()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -77,7 +80,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //NewRelicAgent.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_SwiftInteractionTracing);
         //NewRelicAgent.startWithApplicationToken("AA2b26170b8a3b7845d4436383b2981df9cfda9b13");
-
+        
+        
         return true
     }
 

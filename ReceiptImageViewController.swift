@@ -41,10 +41,10 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
         activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.gray
+        activityIndicator.style = UIActivityIndicatorView.Style.large
         self.view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
+        self.view.isUserInteractionEnabled = false
         
         parseImage = ""
         
@@ -54,8 +54,14 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //scrollImg.contentSize.height = 500
-        //scrollImg.contentSize.width = 300
+        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+         activityIndicator.center = self.view.center
+         activityIndicator.hidesWhenStopped = true
+         activityIndicator.style = UIActivityIndicatorView.Style.large
+         self.view.addSubview(activityIndicator)
+         activityIndicator.startAnimating()
+         self.view.isUserInteractionEnabled = false
+        
         
         let vWidth = self.view.frame.width
         let vHeight = self.view.frame.height
@@ -84,41 +90,6 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.imageFile
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        
-        noInternetConnection()
-        
-    }
-    
-    func noInternetConnection() {
-        
-        if Reachability.isConnectedToNetwork() == true {
-            
-            print("Internet connection OK")
-            
-            getImage()
-            
-            
-        } else {
-            
-            print("Internet connection FAILED" as AnyObject)
-            
-            let alert = UIAlertController(title: "Sorry, no internet connection found.", message: "Warranty Locker requires an internet connection.", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "Try Again?", style: .default, handler: { action in
-                
-                alert.dismiss(animated: true, completion: nil)
-                self.noInternetConnection()
-                
-            }))
-            
-            self.present(alert, animated: true, completion: nil)
-            
-            
-        }
-        
-    }
-    
     
     func getImage() {
         
@@ -191,6 +162,43 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
                 
             }
         })
+        
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        noInternetConnection()
+        
+    }
+    
+    func noInternetConnection() {
+        
+        if Reachability.isConnectedToNetwork() == true {
+            
+            print("Internet connection OK")
+            
+            getImage()
+            
+            activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+                    
+        } else {
+            
+            print("Internet connection FAILED" as AnyObject)
+            
+            let alert = UIAlertController(title: "Sorry, no internet connection found.", message: "Warranty Locker requires an internet connection.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Try Again?", style: .default, handler: { action in
+                
+                alert.dismiss(animated: true, completion: nil)
+                self.noInternetConnection()
+                
+            }))
+            
+            self.present(alert, animated: true, completion: nil)
+            
+            
+        }
         
     }
     

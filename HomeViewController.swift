@@ -7,9 +7,7 @@
 //
 
 import UIKit
-//import CoreData
 import Parse
-//import LocalAuthentication
 
 var array:[String] = [String]()
 
@@ -74,7 +72,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         receiptItem = []
         parseObjectId = []
         userEmail = ""
-     
+        
         PFUser.logOut()
         
         performSegue(withIdentifier: "homeToLogin", sender: self)
@@ -347,7 +345,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getWarranties() {
         
-        
         let query = PFQuery(className:"Warranties")
         query.whereKey("userId", equalTo: PFUser.current()!.objectId!)
         query.order(byDescending: "endDate")
@@ -404,6 +401,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = UIActivityIndicatorView.Style.large
+        self.view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        self.view.isUserInteractionEnabled = false
+        
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
@@ -412,19 +417,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.refreshControl.addTarget(self, action: #selector(HomeViewController.refresh(_:)), for: UIControl.Event.valueChanged)
         self.tableView.addSubview(refreshControl)
         
-        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.gray
-        self.view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents()
-        
         scrollView.contentSize.height = 667
         scrollView.contentSize.width = 250
-        
-        activityIndicator.stopAnimating()
-        UIApplication.shared.endIgnoringInteractionEvents()
         
         searchBarText.delegate = self
         
@@ -450,7 +444,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.tableView.reloadData()
         
         activityIndicator.stopAnimating()
-        UIApplication.shared.endIgnoringInteractionEvents()
+        self.view.isUserInteractionEnabled = true
         
         self.refreshControl!.endRefreshing()
         
@@ -539,6 +533,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         if PFUser.current() == nil {
             
+            activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+            
             self.performSegue(withIdentifier: "homeToLogin", sender: self)
             
         } else {
@@ -548,12 +545,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             getWarranties()
             
             pushNotification()
+            
+            activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
            
         }
         
-        activityIndicator.stopAnimating()
-        UIApplication.shared.endIgnoringInteractionEvents()
-
     }
     
     func pushNotification() {
@@ -580,8 +577,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             if error == nil {
                 // The find succeeded.
-                print(PFUser.current()!.objectId!)
-                print(currentDate)
+               print(currentDate)
                 print("Successfully retrieved \(objects!.count) warranties for push.")
                 // Do something with the found objects
                 if let objects = objects {
