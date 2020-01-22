@@ -85,6 +85,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        activityIndicator.stopAnimating()
+        self.view.isUserInteractionEnabled = true
+        
         if(searchActive) {
             
             return filtered.count
@@ -244,7 +248,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell?.textLabel!.text = " Product: \(newItemItem[(indexPath as NSIndexPath).row]) \r Model #: \(modelItem[(indexPath as NSIndexPath).row]) \r Serial #: \(serialItem[(indexPath as NSIndexPath).row]) \r Bought At: \(boughtItem[(indexPath as NSIndexPath).row]) \r Phone #: \(phoneItem[(indexPath as NSIndexPath).row]) \r Price: $\(priceItem[(indexPath as NSIndexPath).row]) \r Purchase Date: \(purchaseDateItem[(indexPath as NSIndexPath).row]) \r Expire Date: \(endDateItem[(indexPath as NSIndexPath).row]) \r Notes: \(notesItem[(indexPath as NSIndexPath).row])"
         }
         
-        
         return cell!
     }
     
@@ -401,14 +404,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = UIActivityIndicatorView.Style.large
-        self.view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        self.view.isUserInteractionEnabled = false
-        
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
@@ -421,7 +416,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         scrollView.contentSize.width = 250
         
         searchBarText.delegate = self
-        
+       
     }
     
     @objc func refresh(_ sender:AnyObject){
@@ -531,6 +526,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidAppear(_ animated: Bool) {
         
+        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = UIActivityIndicatorView.Style.large
+        self.view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        self.view.isUserInteractionEnabled = false
+          
+               
+        
         if PFUser.current() == nil {
             
             activityIndicator.stopAnimating()
@@ -545,9 +550,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             getWarranties()
             
             pushNotification()
-            
-            activityIndicator.stopAnimating()
-            self.view.isUserInteractionEnabled = true
            
         }
         
