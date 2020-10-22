@@ -7,7 +7,10 @@
 
 import UIKit
 //import CoreData
-import Parse
+//import Parse
+import Firebase
+import FirebaseDatabase
+import FirebaseFirestoreSwift
 
 var id = String()
 var newItemItem = [String]()
@@ -18,8 +21,8 @@ var priceItem = [String]()
 var phoneItem = [String]()
 var purchaseDateItem = [String]()
 var endDateItem = [String]()
-var warrantyItem = [PFFile]()
-var receiptItem = [PFFile]()
+var warrantyItem = [Data]()  //[PFFile]()
+var receiptItem = [Data]()  //[PFFile]()
 var notesItem = [String]()
 var productSearch = [String]()
 
@@ -101,21 +104,6 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
         
     }
     
-    /*func generateBarcode(from string: String) -> UIImage? {
-        let data = string.data(using: String.Encoding.ascii)
-        
-        if let filter = CIFilter(name: "CICode128BarcodeGenerator") {
-            filter.setValue(data, forKey: "inputMessage")
-            let transform = CGAffineTransform(scaleX: 3, y: 3)
-            
-            if let output = filter.outputImage?.transformed(by: transform) {
-                return UIImage(ciImage: output)
-            }
-        }
-        
-        return nil
-    }*/
-    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         picker.dismiss(animated: true)
@@ -145,20 +133,87 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
         
     }
     
-    /*func setBarcode() {
+    func uploadReceiptPic() {
         
-        if (newItem.text?.isEmpty)! {
-            
-        } else {
-            
-            let imageBarcode = generateBarcode(from: newItem.text!)
-            barCode.image = imageBarcode
-            
+        let storage = Storage.storage()
+        
+        let storageRef = storage.reference()
+        
+        // Data in memory
+        let data = imageDataReceipt  //Data()
+
+        // Create a reference to the file you want to upload
+        let receiptRef = storageRef.child("receipt/\(parseImage)-receipt.png")
+
+        // Upload the file to the path "images/rivers.jpg"
+        let uploadTask = receiptRef.putData(data, metadata: nil) { (metadata, error) in
+          guard let metadata = metadata else {
+            // Uh-oh, an error occurred!
+            return
+          }
+          // Metadata contains file metadata such as size, content-type.
+          /*let size = metadata.size
+          // You can also access to download URL after upload.
+            receiptRef.downloadURL { (url, error) in
+            guard url != nil else {
+              // Uh-oh, an error occurred!
+                print("Error occured in uploading image!")
+              return
+            }
+          }*/
         }
-    }*/
+    }
+    
+    func uploadWarrantyPic() {
+        
+        let storage = Storage.storage()
+        
+        let storageRef = storage.reference()
+        
+        // Data in memory
+        let data = imageDataWarranty //Data()
+
+        // Create a reference to the file you want to upload
+        let warrantyRef = storageRef.child("warranty/\(parseImage)-warranty.png")
+
+        // Upload the file to the path "images/rivers.jpg"
+        let uploadTask = warrantyRef.putData(data, metadata: nil) { (metadata, error) in
+          guard let metadata = metadata else {
+            // Uh-oh, an error occurred!
+            print("Error occured in uploading image!")
+            return
+          }
+          // Metadata contains file metadata such as size, content-type.
+          /*let size = metadata.size
+          // You can also access to download URL after upload.
+            warrantyRef.downloadURL { (url, error) in
+            guard url != nil else {
+              // Uh-oh, an error occurred!
+                print("Error occured in downloading image!")
+              return
+            }
+          }*/
+        }
+    }
 
     
     @IBAction func buttonPressed(_ sender: AnyObject) {
+        
+        let dataToSave: [String:Any] =
+            ["product" : newItem.text!,
+             "productSearch" : newItem.text!.lowercased(),
+             "model" : model.text!,
+             "serial" : serial.text!,
+             "price" : price.text!,
+             "bought" : bought.text!,
+             "phone" : phone.text!,
+             "purchaseDate" : purchaseDate.text!,
+             "endDate" : endDate.text!,
+             "notes" : notes.text!,
+             "userId" : currentUserId,
+             "newObjectId" : currentUserEmail
+        ]
+        
         
         if newItem.text == "" {
            
@@ -252,8 +307,66 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
             
             print(imageDataReceipt.count)
             print(imageDataWarranty.count)
-            //if (imageDataReceiptLength == 1 && imageDataWarrantyLength == 1) {
-            let warranty = PFObject(className:"Warranties")
+                
+                
+                let ref = db.collection("Warranties")
+                ref.addDocument(data: dataToSave)
+                { err in
+                    if let err = err {
+                        
+                        print("Error adding document: \(err)")
+                        
+                    } else {
+                        
+                        //print("Document added with ID: \(ref.documentID)")
+                        
+                        print("New Warranty successfully added with warranty and receipt pictures!")
+                        
+                        id = "\(ref.documentID)"
+                        
+                        self.uploadWarrantyPic()
+                        
+                        self.uploadReceiptPic()
+                        
+                    }
+                }
+               
+               
+
+                /*db.collection("Warranties").addDocument([
+                    "product" = newItem.text,
+                    "productSearch" = newItem.text?.lowercased(),
+                    "model" = model.text,
+                    "serial" = serial.text,
+                    "price" = price.text,
+                    "bought" = bought.text,
+                    "phone" = phone.text,
+                    "purchaseDate" = purchaseDate.text,
+                    "endDate" = endDate.text,
+                    "notes" = notes.text,
+                    //"receipt" = PFFile(name:"receipt.png", data:imageDataReceipt),
+                    //"warranty" = PFFile(name:"warranty.png", data:imageDataWarranty),
+                    "userId" = currentUserId,
+                    "newUserId" = currentUserEmail
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    } else {
+                        print("New Warranty successfully added!")
+                        
+                        id = "\(document.documentID)"
+                        
+                        self.uploadWarrantyPic()
+                        
+                        self.uploadReceiptPic()
+                        
+                        //print("\(document.documentID) => \(document.data())")
+                    }
+                }*/
+                
+
+            
+            /*let warranty = PFObject(className:"Warranties")
             warranty["product"] = newItem.text
             warranty["productSearch"] = newItem.text?.lowercased()
             warranty["model"] = model.text
@@ -267,20 +380,24 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
             warranty["receipt"] = PFFile(name:"receipt.png", data:imageDataReceipt)
             warranty["warranty"] = PFFile(name:"warranty.png", data:imageDataWarranty)
             warranty["userId"] = PFUser.current()!.objectId!
+            warranty["newUserId"] = currentUserEmail
             warranty.saveInBackground {
-                (success, error) in
+                (success: Bool, error: Error?) in
+                //(success, error) in
                 if (success) {
                   
                     print("New warranty saved.")
+                    
+                    id = warranty.objectId!
                     
                 } else {
                     
                     print(error!)
                 }
                 
-                id = warranty.objectId!
+                //id = warranty.objectId!
                 
-                }
+                }*/
                 
             } else {
                 
@@ -288,8 +405,34 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                     
                     print(imageDataReceipt.count)
                     print(imageDataWarranty.count)
-                    //if (imageDataReceiptLength == 1 && imageDataWarrantyLength == 1) {
-                    let warranty = PFObject(className:"Warranties")
+                    
+                    //var ref: DatabaseReference!
+                    
+                    let ref = db.collection("Warranties")
+                    ref.addDocument(data: dataToSave)
+                    { err in
+                        if let err = err {
+                            
+                            print("Error adding document: \(err)")
+                            
+                        } else {
+                            
+                            //print("Document added with ID: \(ref!.documentID)")
+                            
+                            print("New Warranty successfully added without and pictures!")
+                            
+                            id = "\(ref!.documentID)"
+                            
+                            //self.uploadWarrantyPic()
+                            
+                            //self.uploadReceiptPic()
+                            
+                        }
+                    }
+                   
+                    
+                    
+                    /*let warranty = PFObject(className:"Warranties")
                     warranty["product"] = newItem.text
                     warranty["productSearch"] = newItem.text?.lowercased()
                     warranty["model"] = model.text
@@ -303,28 +446,55 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                     warranty["receipt"] = PFFile(name:"receipt.png", data:imageDataReceipt)
                     warranty["warranty"] = PFFile(name:"warranty.png", data:imageDataWarranty)
                     warranty["userId"] = PFUser.current()!.objectId!
+                    warranty["newUserId"] = currentUserEmail
                     warranty.saveInBackground {
-                        (success, error) in
+                        (success: Bool, error: Error?) in
+                        //(success, error) in
                         if (success) {
                             
                             print("New warranty saved.")
+                            
+                            id = warranty.objectId!
                             
                         } else {
                             
                             print(error!)
                         }
                         
-                        id = warranty.objectId!
+                        //id = warranty.objectId!
                         
-                    }
+                    }*/
                     
                 }
                     if imageDataWarrantyLength == 1 && imageDataReceiptLength == 0 {
                         
                         print(imageDataReceipt.count)
                         print(imageDataWarranty.count)
-                        //if (imageDataReceiptLength == 1 && imageDataWarrantyLength == 1) {
-                        let warranty = PFObject(className:"Warranties")
+                        
+                        let ref = db.collection("Warranties")
+                        ref.addDocument(data: dataToSave)
+                        { err in
+                            if let err = err {
+                                
+                                print("Error adding document: \(err)")
+                                
+                            } else {
+                                
+                                //print("Document added with ID: \(ref!.documentID)")
+                                
+                                print("New Warranty successfully added with warranty picture!")
+                                
+                                id = "\(ref!.documentID)"
+                                
+                                self.uploadWarrantyPic()
+                                
+                                //self.uploadReceiptPic()
+                                
+                            }
+                        }
+                       
+                        
+                        /*let warranty = PFObject(className:"Warranties")
                         warranty["product"] = newItem.text
                         warranty["productSearch"] = newItem.text?.lowercased()
                         warranty["model"] = model.text
@@ -338,20 +508,24 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                         warranty["receipt"] = PFFile(name:"receipt.png", data:imageDataReceipt)
                         warranty["warranty"] = PFFile(name:"warranty.png", data:imageDataWarranty)
                         warranty["userId"] = PFUser.current()!.objectId!
+                        warranty["newUserId"] = currentUserEmail
                         warranty.saveInBackground {
-                            (success, error) in
+                            (success: Bool, error: Error?) in
+                            //(success, error) in
                             if (success) {
                                 
                                 print("New warranty saved.")
+                                
+                                id = warranty.objectId!
                                 
                             } else {
                                 
                                 print(error!)
                             }
                             
-                            id = warranty.objectId!
+                            //id = warranty.objectId!
                             
-                        }
+                        }*/
                     
                     
                }
@@ -360,8 +534,31 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                         
                         print(imageDataReceipt.count)
                         print(imageDataWarranty.count)
-                        //if (imageDataReceiptLength == 1 && imageDataWarrantyLength == 1) {
-                        let warranty = PFObject(className:"Warranties")
+                        
+                        let ref = db.collection("Warranties")
+                        ref.addDocument(data: dataToSave)
+                        { err in
+                            if let err = err {
+                                
+                                print("Error adding document: \(err)")
+                                
+                            } else {
+                                
+                                //print("Document added with ID: \(ref!.documentID)")
+                                
+                                print("New Warranty successfully added with receipt picture!")
+                                
+                                id = "\(ref!.documentID)"
+                                
+                                //self.uploadWarrantyPic()
+                                
+                                self.uploadReceiptPic()
+                                
+                            }
+                        }
+                       
+                        
+                        /*let warranty = PFObject(className:"Warranties")
                         warranty["product"] = newItem.text
                         warranty["productSearch"] = newItem.text?.lowercased()
                         warranty["model"] = model.text
@@ -375,20 +572,24 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                         warranty["receipt"] = PFFile(name:"receipt.png", data:imageDataReceipt)
                         warranty["warranty"] = PFFile(name:"warranty.png", data:imageDataWarranty)
                         warranty["userId"] = PFUser.current()!.objectId!
+                        warranty["newUserId"] = currentUserEmail
                         warranty.saveInBackground {
-                            (success, error) in
+                            (success: Bool, error: Error?) in
+                            //(success, error) in
                             if (success) {
                                 
                                 print("New warranty saved.")
+                                
+                                id = warranty.objectId!
                                 
                             } else {
                                 
                                 print(error!)
                             }
                             
-                            id = warranty.objectId!
+                            //id = warranty.objectId!
                             
-                        }
+                        }*/
                 }
 
                 

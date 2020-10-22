@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Parse
+import Firebase
 
 class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
 
@@ -98,17 +98,60 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
     
     func getImage() {
         
-        let query = PFQuery(className:"Warranties")
+        let storage = Storage.storage()
+        
+        // Create a reference with an initial file path and name
+        //let pathReference = storage.reference(withPath: "warranty\(parseImage)-warranty.png")
+
+        // Create a reference from a Google Cloud Storage URI
+        let gsReference = storage.reference(forURL: "gs://warranylocker.appspot.com/warranty/\(parseImage)-warranty.png")
+
+        // Create a reference from an HTTPS URL
+        // Note that in the URL, characters are URL escaped!
+        //let httpsReference = storage.reference(forURL: "https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.png")
+        
+        // Create a reference to the file you want to download
+        //let fileRef = gsReference.child("warranty/\(parseImage)-warranty.png")
+
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        gsReference.getData(maxSize: 15 * 1024 * 1024) { data, error in
+          if let error = error {
+            // Uh-oh, an error occurred!
+            print("Error: \(error)")
+            
+            let alert = UIAlertController(title: "Sorry, Warranty Image was not found.", message: "The image was never uploaded.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
+                
+                alert.dismiss(animated: true, completion: nil)
+                
+                
+            }))
+            
+            self.present(alert, animated: true, completion: nil)
+            
+            
+          } else {
+            // Data for "images/island.jpg" is returned
+            
+            self.showImage = UIImage(data:data!)!
+            self.image.image = self.showImage
+            //self.profileW.image = UIImage(data: data!)
+          }
+        }
+        
+        /*let query = PFQuery(className:"Warranties")
         query.whereKey("objectId", equalTo: parseImage)
         query.findObjectsInBackground {
-            (objects, error) in
+            (results: [PFObject]?, error: Error?) in
+            //(objects, error) in
             
             if error == nil {
                 
-                print("Successfully retrieved \(objects!.count) warranty image.")
-        
-                //if let objects = objects {
-                    for object in objects! {
+                print("Successfully retrieved \(results!.count) warranty image.")
+            
+                if let results = results {
+                
+                for object in results {
                         
                         let userImageFile = object["warranty"] as! PFFile  //anotherPhoto["imageFile"] as PFFile
                         
@@ -150,7 +193,7 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
                     }
 
                     
-                //}
+                }
                 
             } else {
                 
@@ -169,7 +212,7 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
                 
             }
 
-        }
+        }*/
     }
 
     override func viewDidAppear(_ animated: Bool) {

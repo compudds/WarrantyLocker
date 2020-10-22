@@ -7,10 +7,10 @@
 //
 
 import UIKit
-import Parse
-import Bolts
+import Firebase
+
 //import PushNotificationManager
-import AuthenticationServices
+//import AuthenticationServices
 
 var currentLoginState = String()
 
@@ -23,7 +23,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        Parse.enableLocalDatastore()
+        FirebaseApp.configure()
+
+        /*if currentUserEmail == Auth.auth().currentUser?.email {
+                   
+         let board = UIStoryboard(name: "Main", bundle: nil)
+                   
+            let initView = board.instantiateViewController(identifier: "Home")
+                   
+         window?.rootViewController = initView
+               
+         }*/
+        
+        /*let parseConfig = ParseClientConfiguration {
+            $0.applicationId = "nq1m8JSkVgioEEPSMEV0XnxfKvQYxfqXAykpfPLG"
+            $0.clientKey = "B8S8qNswgt0QS583kNW0af8hZMl0k98FMdT5eldI"
+            $0.server = "https://parseapi.back4app.com"
+        }
+        Parse.initialize(with: parseConfig)*/
+        
+        /*Parse.enableLocalDatastore()
         
         let parseConfiguration = ParseClientConfiguration(block: { (ParseMutableClientConfiguration) -> Void in
             ParseMutableClientConfiguration.applicationId = "warrantylocker34egegRTGRTgr435rfER"
@@ -31,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ParseMutableClientConfiguration.server = "https://warrantylocker.herokuapp.com/parse"
         })
         
-        Parse.initialize(with: parseConfiguration)
+        Parse.initialize(with: parseConfiguration)*/
         
         //PushNotificationManager.push().delegate = self
         //PushNotificationManager.push().handlePushReceived(launchOptions)
@@ -44,7 +63,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Parse.setApplicationId("tw4kYJnCvcDJP3uVShaA4SWuYHrwKykXJAXxHXF9",clientKey: "Uk9UZkHostx0vUhKCVPhXw48PiMkFqYlvUzQTRBn")
         
         // [Optional] Track statistics around application opens.
-        PFAnalytics.trackAppOpened(launchOptions: launchOptions)
+        
+        //PFAnalytics.trackAppOpened(launchOptions: launchOptions)
         
         // Register for Push Notitications
         /*

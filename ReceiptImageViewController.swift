@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Parse
+import Firebase
 
 class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
 
@@ -95,18 +95,60 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
         
         print("Parse Image")
         
-        let query = PFQuery(className:"Warranties")
+        let storage = Storage.storage()
+        
+        // Create a reference with an initial file path and name
+        //let pathReference = storage.reference(withPath: "receipt/\(parseImage)-receipt.png")
+
+        // Create a reference from a Google Cloud Storage URI
+        let gsReference = storage.reference(forURL: "gs://warranylocker.appspot.com/receipt/\(parseImage)-receipt.png")
+
+        // Create a reference from an HTTPS URL
+        // Note that in the URL, characters are URL escaped!
+        //let httpsReference = storage.reference(forURL: "https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.png")
+        
+        // Create a reference to the file you want to download
+        //let fileRef = gsReference.child("receipt/\(parseImage)-receipt.png")
+
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        gsReference.getData(maxSize: 15 * 1024 * 1024) { data, error in
+          if let error = error {
+            // Uh-oh, an error occurred!
+            print("Error: \(error)")
+            
+            let alert = UIAlertController(title: "Sorry, Receipt Image was not found.", message: "The image was never uploaded.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
+                
+                alert.dismiss(animated: true, completion: nil)
+                
+                
+            }))
+            
+            self.present(alert, animated: true, completion: nil)
+            
+          } else {
+            // Data for "images/island.jpg" is returned
+            //self.profileR.image = UIImage(data: data!)
+            self.showImage = UIImage(data:data!)!
+            
+            self.imageFile.image = self.showImage
+            
+          }
+        }
+        
+        /*let query = PFQuery(className:"Warranties")
         query.whereKey("objectId", equalTo: parseImage)
         query.findObjectsInBackground ( block: {
-            (objects, error) in
+            (results: [PFObject]?, error: Error?) in
+            //(objects, error) in
             
             if error == nil {
                 
-                print("Successfully retrieved \(objects!.count) receipt image.")
+                print("Successfully retrieved \(results!.count) receipt image.")
+            
+                if let results = results {
                 
-                //if (objects as? PFObject) != nil {
-                    
-                    for object in objects! {
+                for object in results {
                         
                         let userImageFile = object["receipt"] as! PFFile
                         
@@ -152,7 +194,7 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
                     }
                     
 
-                //}
+                }
                 
             } else {
                 
@@ -161,7 +203,7 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
                 
                 
             }
-        })
+        })*/
         
     }
     

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Parse
+import Firebase
 
 var signupActive = Bool()
 var userEmail = String()
@@ -24,13 +24,20 @@ class CreateViewController: UIViewController {
             
             alert.dismiss(animated: true, completion: nil)
             
+            self.topController(identifier: "Login")
+            
+            self.topController(identifier: "Create")
+            
+            
         }))
         
-        self.present(alert, animated: true, completion: nil)
+        alert.topControllerAlert()
+        
+        //self.present(alert, animated: true, completion: nil)
         
     }
     
-    @IBOutlet var username: UITextField!
+    //@IBOutlet var username: UITextField!
     
     @IBOutlet var password: UITextField!
     
@@ -63,7 +70,7 @@ class CreateViewController: UIViewController {
         activityIndicator.startAnimating()
         self.view.isUserInteractionEnabled = false
         
-        if username.text == "" || password.text == "" || emailaddress.text == "" {
+        if password.text == "" || emailaddress.text == "" {
             
             self.activityIndicator.stopAnimating()
             self.view.isUserInteractionEnabled = true
@@ -75,13 +82,79 @@ class CreateViewController: UIViewController {
         } else {
             
             
-            let user = PFUser()
+            /*let user = PFUser()
             user.username = username.text
             user.password = password.text
-            user.email = emailaddress.text
-            //user.channels = ["endDate"]
+            user.email = emailaddress.text*/
+            //user.resetPassword = true
             
-            user.signUpInBackground {
+            Auth.auth().createUser(withEmail: emailaddress.text!, password: password.text!) { authResult, error in
+                if let error = error as NSError? {
+                switch AuthErrorCode(rawValue: error.code) {
+                case .operationNotAllowed:
+                
+                    print("Error: The given sign-in provider is disabled for this Firebase project. Enable it in the Firebase console, under the sign-in method tab of the Auth section.")
+                    
+                    self.displayAlert("Error: Could Not Sign Up", error: "The given sign-in provider is disabled for this Firebase project. Enable it in the Firebase console, under the sign-in method tab of the Auth section.")
+                    
+                    //self.show(CreateViewController(), sender: nil)
+                    
+                case .emailAlreadyInUse:
+                  
+                    print("Error: The email address is already in use by another account.")
+                    
+                    self.displayAlert("Error: Could Not Sign Up", error: "The email address is already in use by another account.")
+                    
+                    //self.show(CreateViewController(), sender: nil)
+                    
+                    
+                case .invalidEmail:
+    
+                    print("Error: The email address is badly formatted.")
+                    
+                    self.displayAlert("Error: Could Not Sign Up", error: "The email address is badly formatted.")
+                    
+                    //self.show(CreateViewController(), sender: nil)
+                    
+                    
+                case .weakPassword:
+                  
+                    print("Error: The password must be 6 characters long or more.")
+                    
+                    self.displayAlert("Error: Could Not Sign Up", error: "The password must be 6 characters long or more.")
+                    
+                    //self.show(CreateViewController(), sender: nil)
+                    
+                default:
+                    
+                    print("Error: \(error.localizedDescription)")
+                    
+                    self.displayAlert("Error: Could Not Sign Up", error: "\(error.localizedDescription)")
+                    
+                    //self.show(CreateViewController(), sender: nil)
+                }
+                    
+                    self.activityIndicator.stopAnimating()
+                    self.view.isUserInteractionEnabled = true
+                    
+              } else {
+                
+                self.activityIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
+                
+                print("User signed up successfully")
+                currentUserId = Auth.auth().currentUser!.uid
+                currentUserEmail = (Auth.auth().currentUser?.email)!
+                
+                //self.updateParse()
+                
+                self.performSegue(withIdentifier: "createToHome", sender: self)
+                
+              }
+            }
+             
+            
+            /*user.signUpInBackground {
                 (succeeded, signupError) -> Void in
                 
                 self.activityIndicator.stopAnimating()
@@ -92,13 +165,15 @@ class CreateViewController: UIViewController {
                     
                     print("\(PFUser.current()!) signed up")
                     
+                    self.updateParse()
+                    
                     self.performSegue(withIdentifier: "createToHome", sender: self)
                     
                 } else {
                     
                     if signupError != nil {
                         
-                        error = signupError as! String
+                        error = String(describing: signupError) 
                         
                     } else {
                         
@@ -113,13 +188,50 @@ class CreateViewController: UIViewController {
             
             let currentInstallation = PFInstallation.current()
             currentInstallation.addUniqueObject("expireDate", forKey: "channels")
-            currentInstallation.saveInBackground()
+            currentInstallation.saveInBackground()*/
             
         }
         
     }
     
+    /*func updateParse() {
     
+        let query = PFUser.query()
+        query!.whereKey("objectId", equalTo: PFUser.current()!.objectId!)
+        //query!.whereKey("resetPassword", notEqualTo: true)
+        query!.findObjectsInBackground {
+            //(objects, error) in
+            (results: [PFObject]?, error: Error?) in
+            
+            if error == nil {
+               
+                print("Successfully retrieved \(results!.count) User to update the update & resetPassword = true.")
+                
+                    if let objects = results {
+                        
+                        for object in objects {
+                            
+                            object["resetPassword"] = true
+                            
+                            object["updated"] = true
+                            
+                            object.saveInBackground()
+                            
+                        }
+                        
+                   }
+                
+                } else {
+                           
+                            print("Error: \(error!)")
+                           
+                       }
+                
+        }
+        
+    }*/
+    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -165,14 +277,15 @@ class CreateViewController: UIViewController {
         
         noInternetConnection()
         
-        if PFUser.current() != nil {
+        /*if currentUserId != nil || currentUserId != "" {
             
-            userEmail = PFUser.current()!.email!
+            userEmail = (Auth.auth().currentUser?.email)!
+            
             print(userEmail)
             
             self.performSegue(withIdentifier: "createToHome", sender: self)
             
-        }
+        }*/
         
     }
     
