@@ -322,7 +322,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                         
                         print("New Warranty successfully added with warranty and receipt pictures!")
                         
-                        id = "\(ref.documentID)"
+                        //id = "\(ref.documentID)"
                         
                         self.uploadWarrantyPic()
                         
@@ -421,7 +421,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                             
                             print("New Warranty successfully added without and pictures!")
                             
-                            id = "\(ref!.documentID)"
+                            //id = "\(ref!.documentID)"
                             
                             //self.uploadWarrantyPic()
                             
@@ -484,7 +484,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                                 
                                 print("New Warranty successfully added with warranty picture!")
                                 
-                                id = "\(ref!.documentID)"
+                                //id = "\(ref!.documentID)"
                                 
                                 self.uploadWarrantyPic()
                                 
@@ -548,7 +548,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                                 
                                 print("New Warranty successfully added with receipt picture!")
                                 
-                                id = "\(ref!.documentID)"
+                                //id = "\(ref!.documentID)"
                                 
                                 //self.uploadWarrantyPic()
                                 
