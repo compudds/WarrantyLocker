@@ -171,11 +171,21 @@
                                             <action selector="cameraWarranty:" destination="BJ3-Ss-E7d" eventType="touchUpInside" id="K9g-Ec-gaX"/>
                                         </connections>
                                     </button>
+                                    <textField opaque="NO" alpha="0.0" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lan-l1-bK9">
+                                        <rect key="frame" x="31" y="373" width="97" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="34" id="87u-GA-cDf"/>
+                                            <constraint firstAttribute="width" constant="97" id="LBm-6J-Ebf"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="Flg-aE-Bar" firstAttribute="trailing" secondItem="U4U-of-wRQ" secondAttribute="trailing" id="02h-1H-veg"/>
                                     <constraint firstItem="rK4-qv-au3" firstAttribute="top" secondItem="3YT-m3-61B" secondAttribute="bottom" constant="8" symbolic="YES" id="1Ip-jj-deO"/>
                                     <constraint firstItem="u4e-b5-eTy" firstAttribute="trailing" secondItem="BMv-fG-kfa" secondAttribute="trailing" id="27s-B7-dPD"/>
+                                    <constraint firstItem="lan-l1-bK9" firstAttribute="leading" secondItem="5Zu-Nw-Ibv" secondAttribute="leading" constant="31" id="5N3-P2-T4T"/>
                                     <constraint firstAttribute="trailing" secondItem="3h1-xK-wUq" secondAttribute="trailing" constant="14" id="68U-KY-Q6T"/>
                                     <constraint firstItem="7GY-yW-XDR" firstAttribute="centerX" secondItem="BMv-fG-kfa" secondAttribute="centerX" id="79x-Ow-vJ9"/>
                                     <constraint firstItem="Yak-Yl-GEL" firstAttribute="top" secondItem="1dq-w5-xCs" secondAttribute="bottom" constant="8" symbolic="YES" id="8zo-wR-hGP"/>
@@ -196,6 +206,7 @@
                                     <constraint firstItem="Yak-Yl-GEL" firstAttribute="trailing" secondItem="cps-5Q-lbO" secondAttribute="trailing" id="Szm-7q-VLV"/>
                                     <constraint firstAttribute="trailing" secondItem="FcK-te-7v0" secondAttribute="trailing" constant="6" id="TvF-cd-XbF"/>
                                     <constraint firstItem="rK4-qv-au3" firstAttribute="trailing" secondItem="eUq-PH-cLf" secondAttribute="trailing" id="UN9-aY-yD9"/>
+                                    <constraint firstItem="BMv-fG-kfa" firstAttribute="leading" secondItem="lan-l1-bK9" secondAttribute="trailing" constant="16.5" id="USU-xw-zHz"/>
                                     <constraint firstItem="e0f-zG-Lb3" firstAttribute="trailing" secondItem="7GY-yW-XDR" secondAttribute="trailing" id="UtO-l9-PO1"/>
                                     <constraint firstItem="Yak-Yl-GEL" firstAttribute="leading" secondItem="5Zu-Nw-Ibv" secondAttribute="leading" constant="90" id="V2p-An-UYJ"/>
                                     <constraint firstItem="rK4-qv-au3" firstAttribute="leading" secondItem="eUq-PH-cLf" secondAttribute="leading" id="X3y-CJ-1Re"/>
@@ -246,6 +257,7 @@
                         <outlet property="model" destination="U4U-of-wRQ" id="nXj-8n-l2t"/>
                         <outlet property="newItem" destination="Flg-aE-Bar" id="rWL-ou-n39"/>
                         <outlet property="notes" destination="1dq-w5-xCs" id="3Ic-ec-LbT"/>
+                        <outlet property="number" destination="lan-l1-bK9" id="yAo-RL-neZ"/>
                         <outlet property="phone" destination="D6q-AH-oSa" id="0O0-Cn-kkd"/>
                         <outlet property="price" destination="rK4-qv-au3" id="uKa-yB-B8L"/>
                         <outlet property="profileR" destination="3h1-xK-wUq" id="rZA-eu-s3N"/>
@@ -1202,7 +1214,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="XHh-zE-jKt"/>
-        <segue reference="u1E-1R-Yf7"/>
+        <segue reference="KmI-WM-geY"/>
         <segue reference="TtN-xz-R6h"/>
     </inferredMetricsTieBreakers>
     <resources>

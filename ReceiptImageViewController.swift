@@ -101,7 +101,7 @@ class ReceiptImageViewController: UIViewController, UIScrollViewDelegate {
         //let pathReference = storage.reference(withPath: "receipt/\(parseImage)-receipt.png")
 
         // Create a reference from a Google Cloud Storage URI
-        let gsReference = storage.reference(forURL: "gs://warranylocker.appspot.com/receipt/\(parseImage)-receipt.png")
+        let gsReference = storage.reference(forURL: "gs://warranylocker.appspot.com/receipt/\(picId)-receipt.png")
 
         // Create a reference from an HTTPS URL
         // Note that in the URL, characters are URL escaped!

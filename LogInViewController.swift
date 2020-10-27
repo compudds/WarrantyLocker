@@ -176,6 +176,15 @@ class LoginViewController: UIViewController {
    
     @IBAction func resetPassword(_ sender: AnyObject) {
         
+        /*if UserDefaults.standard.string(forKey: "resetPassword") != "yes" {
+            
+            let defaults = UserDefaults.standard
+            defaults.set("yes", forKey: "resetPassword")
+            
+            print(UserDefaults.standard.string(forKey: "resetPassword")!)
+            
+        }*/
+        
         self.emailPasswordReset.alpha = 1
         self.emailPasswordReset.backgroundColor = UIColor.white
         self.loginButton.setTitle("Send", for: UIControl.State())
@@ -184,7 +193,7 @@ class LoginViewController: UIViewController {
         
     }
     
-    func resetPasswordFirestore() {
+    /*func resetPasswordFirestore() {
         
      if UserDefaults.standard.string(forKey: "resetPassword") != "yes" {
             
@@ -222,7 +231,7 @@ class LoginViewController: UIViewController {
             }
             
         }
-    }
+    }*/
     
     @IBAction func login(_ sender: AnyObject) {
         
@@ -308,9 +317,17 @@ class LoginViewController: UIViewController {
                     defaults.set(currentUserId, forKey: "currentId")
                     defaults.set(currentUserEmail, forKey: "currentEmail")
                     
+                    if defaults.string(forKey: "resetPassword") != "yes" {
+                        
+                        defaults.set("yes", forKey: "resetPassword")
+                        
+                    }
+                    
                     //self.show(HomeViewController(), sender: nil)
                     
-                    if currentUserEmail == Auth.auth().currentUser?.email {
+                    self.topController(identifier: "Home")
+                    
+                    /*if currentUserEmail == Auth.auth().currentUser?.email {
                                
                         self.topController(identifier: "Home")
                            
@@ -319,8 +336,10 @@ class LoginViewController: UIViewController {
                         self.topController(identifier: "Create")
                         
                         self.topController(identifier: "Login")
-                    }
+                    }*/
+                    
                     //self.performSegue(withIdentifier: "loginToHome", sender: self)
+                    
                   }
                 }
                  
@@ -431,8 +450,12 @@ class LoginViewController: UIViewController {
                     self.username.alpha = 1
                     self.loginButton.setTitle("Log In", for: UIControl.State())
                     
-                    let defaults = UserDefaults.standard
-                    defaults.set("yes", forKey: "resetPassword")
+                    if UserDefaults.standard.string(forKey: "resetPassword") != "yes" {
+                        
+                        let defaults = UserDefaults.standard
+                        defaults.set("yes", forKey: "resetPassword")
+                        
+                    }
                     
                   }
                 }
@@ -527,6 +550,14 @@ class LoginViewController: UIViewController {
         print("currentUserEmail: \(currentUserEmail)")
         
         //UserDefaults.standard.set("", forKey: "resetPassword")
+        
+        if UserDefaults.standard.string(forKey: "resetPassword") == nil {
+            
+            UserDefaults.standard.set("no", forKey: "resetPassword")
+            
+        }
+        
+        print("resetPassword: \(UserDefaults.standard.string(forKey: "resetPassword")!)")
         
         resetPasswordAlert()
         

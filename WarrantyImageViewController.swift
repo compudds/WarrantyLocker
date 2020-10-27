@@ -104,7 +104,7 @@ class WarrantyImageViewController: UIViewController, UIScrollViewDelegate {
         //let pathReference = storage.reference(withPath: "warranty\(parseImage)-warranty.png")
 
         // Create a reference from a Google Cloud Storage URI
-        let gsReference = storage.reference(forURL: "gs://warranylocker.appspot.com/warranty/\(parseImage)-warranty.png")
+        let gsReference = storage.reference(forURL: "gs://warranylocker.appspot.com/warranty/\(picId)-warranty.png")
 
         // Create a reference from an HTTPS URL
         // Note that in the URL, characters are URL escaped!

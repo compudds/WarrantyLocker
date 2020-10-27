@@ -29,6 +29,8 @@ var productSearch = [String]()
 //var imageW = UIImage()
 //var imageR = UIImage()
 
+var picId = String()
+
 class AddViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     var imageWarranty = UIImagePickerController()
@@ -71,11 +73,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
         activityIndicator.startAnimating()
         self.view.isUserInteractionEnabled = false
 
+        picId = ""
         
         performSegue(withIdentifier: "addToHome", sender: self)
     }
     
     @IBAction func addToEdit(_ sender: AnyObject) {
+        
+        picId = ""
         
         performSegue(withIdentifier: "addToEdit", sender: self)
     }
@@ -143,7 +148,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
         let data = imageDataReceipt  //Data()
 
         // Create a reference to the file you want to upload
-        let receiptRef = storageRef.child("receipt/\(parseImage)-receipt.png")
+        let receiptRef = storageRef.child("receipt/\(picId)-receipt.png")
 
         // Upload the file to the path "images/rivers.jpg"
         let uploadTask = receiptRef.putData(data, metadata: nil) { (metadata, error) in
@@ -174,7 +179,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
         let data = imageDataWarranty //Data()
 
         // Create a reference to the file you want to upload
-        let warrantyRef = storageRef.child("warranty/\(parseImage)-warranty.png")
+        let warrantyRef = storageRef.child("warranty/\(picId)-warranty.png")
 
         // Upload the file to the path "images/rivers.jpg"
         let uploadTask = warrantyRef.putData(data, metadata: nil) { (metadata, error) in
@@ -195,9 +200,15 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
           }*/
         }
     }
-
+    
+    func randomString(length: Int) -> String {
+      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+      return String((0..<length).map{ _ in letters.randomElement()! })
+    }
     
     @IBAction func buttonPressed(_ sender: AnyObject) {
+        
+        picId = randomString(length: 12)
         
         let dataToSave: [String:Any] =
             ["product" : newItem.text!,
@@ -211,6 +222,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
              "endDate" : endDate.text!,
              "notes" : notes.text!,
              "userId" : currentUserId,
+             "objectId": picId,
+             "pushSent": "no",
              "newObjectId" : currentUserEmail
         ]
         
@@ -318,6 +331,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                         
                     } else {
                         
+                        
+                        
                         //print("Document added with ID: \(ref.documentID)")
                         
                         print("New Warranty successfully added with warranty and receipt pictures!")
@@ -330,41 +345,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, UINavigationCont
                         
                     }
                 }
-               
-               
-
-                /*db.collection("Warranties").addDocument([
-                    "product" = newItem.text,
-                    "productSearch" = newItem.text?.lowercased(),
-                    "model" = model.text,
-                    "serial" = serial.text,
-                    "price" = price.text,
-                    "bought" = bought.text,
-                    "phone" = phone.text,
-                    "purchaseDate" = purchaseDate.text,
-                    "endDate" = endDate.text,
-                    "notes" = notes.text,
-                    //"receipt" = PFFile(name:"receipt.png", data:imageDataReceipt),
-                    //"warranty" = PFFile(name:"warranty.png", data:imageDataWarranty),
-                    "userId" = currentUserId,
-                    "newUserId" = currentUserEmail
-                ]) { err in
-                    if let err = err {
-                        print("Error writing document: \(err)")
-                    } else {
-                        print("New Warranty successfully added!")
-                        
-                        id = "\(document.documentID)"
-                        
-                        self.uploadWarrantyPic()
-                        
-                        self.uploadReceiptPic()
-                        
-                        //print("\(document.documentID) => \(document.data())")
-                    }
-                }*/
                 
-
+               
             
             /*let warranty = PFObject(className:"Warranties")
             warranty["product"] = newItem.text
